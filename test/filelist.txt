@@ -1,0 +1,2 @@
+/Users/liefeld/GenePattern/gp_dev/docker/community-amaretto/src/Community-AMARETTO/Community_AMARETTO_input_files/LIHC.RData
+/Users/liefeld/GenePattern/gp_dev/docker/community-amaretto/src/Community-AMARETTO/Community_AMARETTO_input_files/GBM.RData
