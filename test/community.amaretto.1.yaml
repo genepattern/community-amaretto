@@ -1,0 +1,10 @@
+#
+# ant -f ${GPUNIT_HOME}/build.xml -Dgpunit.diffStripTrailingCR="--strip-trailing-cr" -Dgp.host="beta.genepattern.org" -Dgp.url="https://beta.genepattern.org" -Dgp.user="ted" -Dgp.password="" -Dgpunit.testfolder=`pwd` gpunit
+#
+name: community.amaretto.1
+module: CommunityAmaretto
+params: 
+    "amaretto.result.files": [ "https://datasets.genepattern.org/data/module_support_files/CommunityAmaretto/GBM.RData", "https://datasets.genepattern.org/data/module_support_files/CommunityAmaretto/LIHC.RData"] 
+    "output.file": "CommunityAMARETTOResults" 
+assertions:
+    jobStatus: success
