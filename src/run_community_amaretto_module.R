@@ -20,7 +20,7 @@ suppressMessages(suppressWarnings(library(AMARETTO)))
 suppressMessages(suppressWarnings(library(plyr)))
 suppressMessages(suppressWarnings(library(igraph)))
 
-source("/source/Community-AMARETTO/AMARETTO_Communities_Minimal.R")
+suppressMessages(suppressWarnings(source("/source/Community-AMARETTO/AMARETTO_Communities_Minimal.R")))
 
 # Print the sessionInfo so that there is a listing of loaded packages, 
 # the current version of R, and other environmental information in our
