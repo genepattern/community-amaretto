@@ -17,7 +17,6 @@ suppressMessages(suppressWarnings(library(stringi)))
 suppressMessages(suppressWarnings(library(getopt)))
 suppressMessages(suppressWarnings(library(optparse)))
 suppressMessages(suppressWarnings(library(R.utils)))
-suppressMessages(suppressWarnings(library(AMARETTO)))
 suppressMessages(suppressWarnings(library(plyr)))
 suppressMessages(suppressWarnings(library(igraph)))
 suppressMessages(suppressWarnings(library(CommunityAMARETTO)))
@@ -39,7 +38,7 @@ is.emptyString=function(a){return (trimws(a)=="")}
 # https://cran.r-project.org/web/packages/optparse/index.html
 arguments <- commandArgs(trailingOnly=TRUE)
 
-print(packageVersion("AMARETTO"))
+#print(packageVersion("AMARETTO"))
 # Declare an option list for optparse to use in parsing the command line.
 option_list <- list(
   # Note: it's not necessary for the names to match here, it's just a convention
@@ -47,9 +46,12 @@ option_list <- list(
   make_option("--amaretto.result.files", dest="amaretto.result.files"),
   make_option("--amaretto.report.files", dest="amaretto.report.files"),
   make_option("--output.file", dest="output.file"),
-  make_option("--num.cpu", dest="num.cpu")
+  make_option("--num.cpu", dest="num.cpu"),
+  make_option("--gene.sets.database", dest="gene.sets.database"),
+  make_option("--from.msigdb", type="logical", dest="from.msigdb"),
+  make_option("--gmt.url.present", type="logical", dest="gmt.url.present")
 
-  )
+)
 
 # Parse the command line arguments with the option list, printing the result
 # to give a record as with sessionInfo.
@@ -57,11 +59,16 @@ opt <- parse_args(OptionParser(option_list=option_list), positional_arguments=TR
 print(opt)
 opts <- opt$options
 
+resultFileList=NULL
+reportFileList=NULL
+
 if (file.exists(opts$amaretto.result.files)){
 	resultFileList = readLines(opts$amaretto.result.files)
 }
-if (file.exists(opts$amaretto.report.files)){
-	reportFileList = readLines(opts$amaretto.report.files)
+if (!is.null(opts$amaretto.report.files) ) {
+	if (file.exists(opts$amaretto.report.files)){
+		reportFileList = readLines(opts$amaretto.report.files)
+	}
 }
 
 AMARETTOdirectories <- list()
@@ -78,13 +85,14 @@ for (file in resultFileList){
         resultKeys <- append(resultKeys, key)
 	}
 } 
-HTMLsAMARETTOlist <- list()
+HTMLsAMARETTOlist <- NULL
 reportKeys <- list()
 
 # ReportsDirectory=file.path(getwd(), "reports")
 # dir.create(file.path(ReportsDirectory))
-for (file in reportFileList){
-    
+if (! is.null(reportFileList) ){
+HTMLsAMARETTOlist <- list()
+for (file in reportFileList){    
      if (!is.emptyString(file) && file.exists(file)){
         # key is whatever comes before "_report.zip" in the file name
         pos = stri_locate(pattern = '_report.zip', file, fixed = TRUE)
@@ -94,8 +102,9 @@ for (file in reportFileList){
         reportKeys <- append(reportKeys, key)
     }
 } 
+}
 
-if (! setequal(resultKeys, reportKeys)){
+if ((!is.null( reportFileList) ) && (! setequal(resultKeys, reportKeys))){
      warning("Mismatched result and report files provided.  Please ensure for each report zip there is a result zip using the same filename prefix.")
 
 	print("RESULTS")
@@ -106,10 +115,50 @@ if (! setequal(resultKeys, reportKeys)){
      quit(status=999)
 }
 
-#AMARETTOPancancerData <- CreatePancancerData(ResultsDirectory)
-#AMARETTOPancancer_results <- AMARETTO_Pancancer(AMARETTOPancancerData=AMARETTOPancancerData)
-#CommunitiesResults <- AMARETTO_CreateCommunities(AMARETTOPancancer_results)
-#save(CommunitiesResults,file=file.path(getwd(),paste(opts$output.file,".RData",sep = "")))
+hyper.geo.ref = NULL
+from.msigdb = TRUE
+gmt.url.present = FALSE
+catGmtFilename = "./amCombinedGmt.gmt"
+if ((!is.null(opts$gene.sets.database))){
+        if (file.exists(opts$gene.sets.database)){
+              print("LOADING GENES FROM GENE SET DATABASE")
+              # XXX TODO - need to combine all the file contents, right now its last one wins
+
+              # its potentially a list of gmt files.  Read the file names then load them all in
+              catExec = "cat "
+              geneSetFileList = readLines(opts$gene.sets.database)
+              for (fileRaw in geneSetFileList){
+                    file = trimws(fileRaw)
+                    print(paste("   ---   loading from ", file))
+                    if (!is.emptyString(file) && file.exists(file)){
+                           # hyper.geo.ref = as.character(read.delim(file)$V1)
+                        catExec = paste(catExec, file)
+                        print(paste("Building catexec: ", catExec))
+                    } else {
+                        print(paste("GMT issue ", file))
+                    }
+             }
+             hyper.geo.ref = catGmtFilename
+             catExec <- paste(catExec, " > ", hyper.geo.ref )
+             print(paste("running: ", catExec))
+             system(catExec)
+             #  hyper.geo.ref = as.character(read.delim(opts$hyper.geo.ref.file)$V1)
+             from.msigdb=opts$from.msigdb
+             gmt.url.present=opts$gmt.url.present
+        } else {
+             print("Optional hyper geo ref file was not provided. Using H.C2CP.genesets.gmt")
+             hyper.geo.ref="/source/AMARETTO/inst/templates/H.C2CP.genesets.gmt"
+             from.msigdb=TRUE
+             gmt.url.present=FALSE
+        }
+} else {
+    hyper.geo.ref="/usr/local/bin/community-amaretto/H.C2CP.genesets.gmt"
+    from.msigdb=TRUE
+    gmt.url.present=FALSE
+
+    print("USING DEFAULT GMT")
+}    
+
 
 AMARETTO_all <- cAMARETTO_Read(AMARETTOdirectories)
 AMARETTOinit_all <- AMARETTO_all$AMARETTOinit_all
@@ -128,9 +177,12 @@ print("B")
 #This part is to write a report. The HTMLsAMARETTOlist are links to the HTML reports for AMARETTO
 #  HTMLsAMARETTOlist <- c("LIHC"="./LIHCreport","BLCA"="./BLCAreport","GBM"="./GBMreport")
 #  also need a param:  hyper_geo_reference = gmtfile,
-cAMARETTO_HTMLreport(cAMARETTOresults,cAMARETTOnetworkM, cAMARETTOnetworkC,HTMLsAMARETTOlist=HTMLsAMARETTOlist, hyper_geo_test_bool = TRUE,  MSIGDB = TRUE, GMTURL = FALSE, output_address= "./“)
-print("C")
+print(paste("GMT is ", hyper.geo.ref))
+
+cAMARETTO_HTMLreport(cAMARETTOresults,cAMARETTOnetworkM, cAMARETTOnetworkC,HTMLsAMARETTOlist=HTMLsAMARETTOlist, hyper_geo_test_bool = TRUE, hyper_geo_reference = hyper.geo.ref , MSIGDB = from.msigdb, GMTURL = gmt.url.present, output_address= "./")
+
 #cAMARETTO can be exported as a zip
+print("C Exporting")
 cAMARETTO_ExportResults(cAMARETTOresults,cAMARETTOnetworkM, cAMARETTOnetworkC, output_address="./“)
 
 
