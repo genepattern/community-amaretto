@@ -1,7 +1,7 @@
 # copyright 2017-2018 Regents of the University of California and the Broad Institute. All rights reserved.
 
 #FROM genepattern/docker-amaretto:0.51
-FROM r-base:3.5.0
+FROM r-base:3.5.2
 
 RUN apt-get update  && \
     apt-get install -t unstable libssl-dev  --yes && \
@@ -27,6 +27,9 @@ RUN Rscript /build/source/install2.R
 
 # the module files are set into /usr/local/bin/amaretto
 COPY src/* /usr/local/bin/community-amaretto/ 
+
+RUN apt-get update && apt-get install -t unstable pandoc --yes
+
 
 CMD ["Rscript", "/usr/local/bin/cogaps/run_community_amaretto_module.R" ]
 

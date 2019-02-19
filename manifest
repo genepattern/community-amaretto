@@ -2,9 +2,9 @@
 #Mon Jun 18 21:02:09 UTC 2018
 JVMLevel=
 LSID=urn\:lsid\:broad.mit.edu\:cancer.software.genepattern.module.analysis\:00380\:999999999
-author=Olivier Gevaert, Stanford University, wrapped as a module by Ted Liefeld, UCSD School of Medicine.
+author=Celine Everaert, Nathalie Pochet, of the Broad Institute and Olivier Gevaert, Stanford University, wrapped as a module by Ted Liefeld, UCSD School of Medicine.
 categories=SingleCell
-commandLine=/usr/bin/Rscript --no-save --quiet --slave --no-restore /source/Community-AMARETTO/run_community_amaretto_module.R  --amaretto.result.files\=<amaretto.result.files> --amaretto.report.files\=<amaretto.report.files> --output.file\=<output.file>  --gene.sets.database=<gene.sets.database> --from.msigdb=<from.msigdb> --gmt.url.present=<gmt.url.present>
+commandLine=/usr/bin/Rscript --no-save --quiet --slave --no-restore /usr/local/bin/community-amaretto/run_community_amaretto_module.R   --amaretto.result.files\=<amaretto.result.files> --amaretto.report.files\=<amaretto.report.files> --output.file\=<output.file>  --gene.sets.database=<gene.sets.database> --from.msigdb=<from.msigdb> --gmt.url.present=<gmt.url.present>
 
 cpuType=any
 description=Computes module overlap between multiple AMARETTO results
@@ -13,13 +13,13 @@ language=any
 minGenePatternVersion=3.9.13
 name=CommunityAmaretto
 os=any
-job.docker.image=genepattern/community-amaretto
+job.docker.image=genepattern/community-amaretto:develop
 
 p1_MODE=IN
 p1_TYPE=FILE
 p1_default_value=
 p1_description=Files containing the zipped AMARETTO results
-p1_fileFormat=rda
+p1_fileFormat=zip
 p1_flag=
 p1_name=amaretto.result.files
 p1_numValues=1+
@@ -48,11 +48,11 @@ p3_MODE=IN
 p3_TYPE=FILE
 p3_default_value=
 p3_description=Files containing the zipped AMARETTO reports with name prefixes matching the AMARETTO result files.
-p3_fileFormat=rda
+p3_fileFormat=zip
 p3_flag=
 p3_name=amaretto.report.files
-p3_numValues=1+
-p3_optional=
+p3_numValues=0+
+p3_optional=on
 p3_prefix=
 p3_prefix_when_specified=
 p3_type=java.io.File
