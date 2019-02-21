@@ -75,27 +75,29 @@ resultKeys <- list()
 for (file in resultFileList){
    if (!is.emptyString(file) && file.exists(file)){
          # key is whatever comes before "AMARETTOresults" in the filename
-        pos = stri_locate(pattern = '_AMARETTOresults', file, fixed = TRUE)
+        rFilename = basename(file)
+        pos = stri_locate(pattern = '_AMARETTOresults', rFilename, fixed = TRUE)
        
-        key =  substr(basename(file), 0, pos[1]-1)
+        key =  substr(rFilename, 0, pos[1]-1)
         AMARETTOdirectories[key] <- file
         resultKeys <- append(resultKeys, key)
 	}
 } 
-HTMLsAMARETTOlist <- NULL
+HTMLsAMARETTOZips <- NULL
 reportKeys <- list()
 
 # ReportsDirectory=file.path(getwd(), "reports")
 # dir.create(file.path(ReportsDirectory))
 if (! is.null(reportFileList) ){
-HTMLsAMARETTOlist <- list()
+HTMLsAMARETTOZips <- list()
 for (file in reportFileList){    
      if (!is.emptyString(file) && file.exists(file)){
         # key is whatever comes before "_report.zip" in the file name
-        pos = stri_locate(pattern = '_report.zip', file, fixed = TRUE)
+        rFilename = basename(file)
+        pos = stri_locate(pattern = '_report.zip', rFilename, fixed = TRUE)
        
-        key =  substr(basename(file), 0, pos[1]-1)
-        HTMLsAMARETTOlist[[key]] <- file
+        key =  substr(rFilename, 0, pos[1]-1)
+        HTMLsAMARETTOZips[[key]] <- file
         reportKeys <- append(reportKeys, key)
     }
 } 
@@ -149,7 +151,12 @@ if ((!is.null(opts$gene.sets.database))){
 }    
 
 print( AMARETTOdirectories)
-AMARETTO_all <- cAMARETTO_Read(AMARETTOdirectories)
+print( HTMLsAMARETTOZips)
+
+AMARETTO_all <- cAMARETTO_Read(AMARETTOdirectories, unzipParentDirectory="/tmp")
+HTMLsAMARETTOlist  <-cAMARETTO_HTML_Read ( HTMLsAMARETTOZips , unzipParentDirectory = "/tmp")
+
+
 AMARETTOinit_all <- AMARETTO_all$AMARETTOinit_all
 AMARETTOresults_all <- AMARETTO_all$AMARETTOresults_all
 # we have a few params here NCores, 0.10, 5, filterComm
@@ -159,7 +166,6 @@ cAMARETTOnetworkM<-cAMARETTO_ModuleNetwork(cAMARETTOresults,0.10,5)
 
 cAMARETTOnetworkC<-cAMARETTO_IdentifyCom(cAMARETTOnetworkM, filterComm = FALSE)
 
-print("B")
 #This part is to write a report. The HTMLsAMARETTOlist are links to the HTML reports for AMARETTO
 #  HTMLsAMARETTOlist <- c("LIHC"="./LIHCreport","BLCA"="./BLCAreport","GBM"="./GBMreport")
 #  also need a param:  hyper_geo_reference = gmtfile,
@@ -189,7 +195,10 @@ if (file.exists(catGmtFilename)){
 
 unlink("Rplots.pdf")
 
-
+# remove the expanded result zips
+#for (key in reportKeys){
+#    unlink(key)
+#}
 
 
 

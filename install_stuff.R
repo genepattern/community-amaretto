@@ -12,5 +12,5 @@ install.packages(c('devtools'))
 library(devtools)
 
 devtools::install_github("broadinstitute/CommunityAMARETTO",ref="develop")
-print("-.- Install complete")
+print("<-.-> Install complete")
 
