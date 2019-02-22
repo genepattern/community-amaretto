@@ -29,10 +29,7 @@ suppressMessages(suppressWarnings(library(CommunityAMARETTO)))
 # and comparing between runs.
 sessionInfo()
 
-
 is.emptyString=function(a){return (trimws(a)=="")}
-
-
 
 # Get the command line arguments.  We'll process these with optparse.
 # https://cran.r-project.org/web/packages/optparse/index.html
@@ -70,33 +67,33 @@ if (!is.null(opts$amaretto.report.files) ) {
 
 AMARETTOdirectories <- list()
 resultKeys <- list()
-# ResultsDirectory=file.path(getwd(), "results")
-# dir.create(file.path(ResultsDirectory))
 for (file in resultFileList){
    if (!is.emptyString(file) && file.exists(file)){
          # key is whatever comes before "AMARETTOresults" in the filename
         rFilename = basename(file)
         pos = stri_locate(pattern = '_AMARETTOresults', rFilename, fixed = TRUE)
-       
         key =  substr(rFilename, 0, pos[1]-1)
+        print(paste("result key ", key))
         AMARETTOdirectories[key] <- file
         resultKeys <- append(resultKeys, key)
 	}
 } 
 HTMLsAMARETTOZips <- NULL
 reportKeys <- list()
-
-# ReportsDirectory=file.path(getwd(), "reports")
-# dir.create(file.path(ReportsDirectory))
 if (! is.null(reportFileList) ){
 HTMLsAMARETTOZips <- list()
-for (file in reportFileList){    
+print("reading report list")
+for (file in reportFileList){
+     print(paste("report file: ", file) )    
      if (!is.emptyString(file) && file.exists(file)){
         # key is whatever comes before "_report.zip" in the file name
         rFilename = basename(file)
         pos = stri_locate(pattern = '_report.zip', rFilename, fixed = TRUE)
        
         key =  substr(rFilename, 0, pos[1]-1)
+
+        print(paste("report key ", key))
+
         HTMLsAMARETTOZips[[key]] <- file
         reportKeys <- append(reportKeys, key)
     }
@@ -109,7 +106,7 @@ if ((!is.null( reportFileList) ) && (! setequal(resultKeys, reportKeys))){
 	print("RESULTS")
 	print(AMARETTOdirectories)
 	print("REPORTS")
-	print(HTMLsAMARETTOlist)
+	print(HTMLsAMARETTOZips)
 
      quit(status=999)
 }
@@ -156,6 +153,7 @@ print( HTMLsAMARETTOZips)
 AMARETTO_all <- cAMARETTO_Read(AMARETTOdirectories, unzipParentDirectory="/tmp")
 HTMLsAMARETTOlist  <-cAMARETTO_HTML_Read ( HTMLsAMARETTOZips , unzipParentDirectory = "/tmp")
 
+print( HTMLsAMARETTOlist)
 
 AMARETTOinit_all <- AMARETTO_all$AMARETTOinit_all
 AMARETTOresults_all <- AMARETTO_all$AMARETTOresults_all
