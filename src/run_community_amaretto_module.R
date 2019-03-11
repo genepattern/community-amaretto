@@ -43,6 +43,9 @@ option_list <- list(
   make_option("--amaretto.report.files", dest="amaretto.report.files"),
   make_option("--output.file", dest="output.file"),
   make_option("--num.cpu", dest="num.cpu"),
+  make_option("--inter", dest="inter", type="integer"),
+  make_option("--pvalue", dest="pvalue", type="double"),
+  make_option("--filterComm", dest="filterComm", type="logical"),
   make_option("--gene.sets.database", dest="gene.sets.database")
 
 )
@@ -160,9 +163,9 @@ AMARETTOresults_all <- AMARETTO_all$AMARETTOresults_all
 # we have a few params here NCores, 0.10, 5, filterComm
 cAMARETTOresults<-cAMARETTO_Results(AMARETTOinit_all,AMARETTOresults_all, NrCores = 4,output_dir = "./")
 
-cAMARETTOnetworkM<-cAMARETTO_ModuleNetwork(cAMARETTOresults,0.10,5)
+cAMARETTOnetworkM<-cAMARETTO_ModuleNetwork(cAMARETTOresults,pvalue=opts$pvalue,inter=opts$inter)
 
-cAMARETTOnetworkC<-cAMARETTO_IdentifyCom(cAMARETTOnetworkM, filterComm = FALSE)
+cAMARETTOnetworkC<-cAMARETTO_IdentifyCom(cAMARETTOnetworkM, filterComm = opts$filterComm)
 
 #This part is to write a report. The HTMLsAMARETTOlist are links to the HTML reports for AMARETTO
 #  HTMLsAMARETTOlist <- c("LIHC"="./LIHCreport","BLCA"="./BLCAreport","GBM"="./GBMreport")
