@@ -1,5 +1,3 @@
-#Mon, 27 Aug 2018 11:23:51 -0700
-#Mon Jun 18 21:02:09 UTC 2018
 JVMLevel=
 LSID=urn\:lsid\:broad.mit.edu\:cancer.software.genepattern.module.analysis\:00380\:999999999
 author=Celine Everaert, Nathalie Pochet, of the Broad Institute and Olivier Gevaert, Stanford University, wrapped as a module by Ted Liefeld, UCSD School of Medicine.
@@ -79,42 +77,41 @@ p5_default_value=0.05
 p5_description=The network edges with their p-value larger than this value will be filtered out.
 p5_fileFormat=
 p5_flag=
-p5_name=pvalue
+p5_name=p-value
 p5_numValues=1..1
 p5_optional=
 p5_prefix=
 p5_prefix_when_specified=
 p5_type=java.lang.String
-p5_value=FALSE\=no;TRUE\=yes
+p5_value=
 
 p6_MODE=
 p6_TYPE=TEXT
-p6_default_value=FALSE
-p6_description=If it is set to “yes”, communities (subnetworks) that do not satisfy all these following conditions will be filtered out: 1- Number of nodes in the community to be larger than the 1% of the total number of nodes in the network, 2- Number of represented cancers in the community to be larger than the 10% of the subnetwork size (and at least, larger than 2), 3- Ratio between edges inside/outside the community to be larger than 0.5.
+p6_default_value=10
+p6_description=The network edges with their number of overlapping genes less than this value will be filtered out.
 p6_fileFormat=
 p6_flag=
-p6_name=filter.communities
+p6_name=min.number.overlapping.genes
 p6_numValues=1..1
 p6_optional=
 p6_prefix=
 p6_prefix_when_specified=
 p6_type=java.lang.String
-p6_value=FALSE\=no;TRUE\=yes
+p6_value=
 
 p7_MODE=
 p7_TYPE=TEXT
-p7_default_value=5
-p7_description=The network edges with their number of overlapping genes less than this value will be filtered out. 
+p7_default_value=FALSE
+p7_description=If it is set to “yes”, communities (subnetworks) that do not satisfy all these following conditions will be filtered out: 1- Number of nodes in the community to be larger than the 1% of the total number of nodes in the network, 2- Number of represented cancers in the community to be larger than the 10% of the subnetwork size (and at least, larger than 2), 3- Ratio between edges inside/outside the community to be larger than 0.5.
 p7_fileFormat=
 p7_flag=
-p7_name=pvalue
+p7_name=filter.communities
 p7_numValues=1..1
 p7_optional=
 p7_prefix=
 p7_prefix_when_specified=
 p7_type=java.lang.String
 p7_value=FALSE\=no;TRUE\=yes
-
 
 privacy=public
 publicationDate=10/09/2018 11\:23 
