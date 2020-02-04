@@ -1,7 +1,7 @@
 JVMLevel=
 LSID=urn\:lsid\:broad.mit.edu\:cancer.software.genepattern.module.analysis\:00380\:999999999
 author=Celine Everaert, Nathalie Pochet, of the Broad Institute and Olivier Gevaert, Stanford University, wrapped as a module by Ted Liefeld, UCSD School of Medicine.
-categories=SingleCell
+categories=Single-Cell
 commandLine=/usr/bin/Rscript --no-save --quiet --slave --no-restore /usr/local/bin/community-amaretto/run_community_amaretto_module.R   --amaretto.result.files\=<amaretto.result.files> --amaretto.report.files\=<amaretto.report.files> --output.file\=<output.file>  --gene.sets.database=<gene.sets.database> --pvalue=<p-value> --filterComm=<filter.communities> --inter=<min.number.overlapping.genes>
 
 cpuType=any
@@ -119,6 +119,6 @@ quality=${quality.level}
 requiredPatchLSIDs=
 requiredPatchURLs=
 taskDoc=doc.html
-taskType=SingleCell
+taskType=Single-Cell
 userid=ted
 version=Initial Revision
